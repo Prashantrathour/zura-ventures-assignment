@@ -1,17 +1,22 @@
 // LoginForm.js
 import React, { useState } from "react";
-
-const LoginForm = ({ onClose, onLogin }) => {
+import {useDispatch, useSelector} from "react-redux"
+import { userlogin } from "../REDUX/UserAuth/action";
+import { succesAlert } from "./Notification";
+import {ToastContainer} from "react-toastify"
+const LoginForm = ({ onClose }) => {
+  const dispatch=useDispatch()
+  const {isLoading}=useSelector((store)=>store.userreducer)
   const [UserEmail, setUserEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setusername] = useState("");
   const [error, setError] = useState(null);
 
   const handleUserEmailChange = (e) => {
     setUserEmail(e.target.value);
   };
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
+  const handleusernameChange = (e) => {
+    setusername(e.target.value);
   };
 
   const handleSubmit = async (e) => {
@@ -20,13 +25,18 @@ const LoginForm = ({ onClose, onLogin }) => {
     
     try {
       
-      if (UserEmail === "123" && password === "123") {
-        // Simulating a successful login
-        onLogin({ UserEmail });
-        onClose();
+      if (UserEmail  && username ) {
+      
+    
+          dispatch(userlogin({ email:UserEmail,username })).then((res)=>{
+            succesAlert("user registred")
+            onClose();
+          });
+          
+    
       } else {
         // Simulating a failed login
-        setError("Invalid UserEmail or password. Please try again.");
+        setError("Invalid UserEmail or username. Please try again.");
       }
     } catch (error) {
       // Handle any error from the server
@@ -36,6 +46,7 @@ const LoginForm = ({ onClose, onLogin }) => {
 
   return (
     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
+      <ToastContainer/>
       <div className="bg-white w-1/3 p-10 rounded-lg">
         <h2 className="text-2xl font-bold mb-4">Login</h2>
         <form onSubmit={handleSubmit}>
@@ -59,17 +70,17 @@ const LoginForm = ({ onClose, onLogin }) => {
 
           <div className="mb-4">
             <label
-              htmlFor="password"
+              htmlFor="username"
               className="block text-sm font-medium text-gray-600"
             >
-              Password
+              Username
             </label>
             <input
-              type="password"
-              id="password"
-              name="password"
-              value={password}
-              onChange={handlePasswordChange}
+              type="username"
+              id="username"
+              name="username"
+              value={username}
+              onChange={handleusernameChange}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
               required
             />
@@ -85,8 +96,9 @@ const LoginForm = ({ onClose, onLogin }) => {
             <button
               type="submit"
               className="px-4 py-2 bg-logo-color text-white rounded-md"
+              desdisabled={isLoading} 
             >
-              Login
+              {!isLoading?"Login":"Loading..."}
             </button>
           </div>
         </form>

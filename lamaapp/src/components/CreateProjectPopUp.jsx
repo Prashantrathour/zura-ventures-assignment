@@ -1,7 +1,11 @@
 // CreateProjectPopup.js
 import React, { useState } from "react";
+import {useDispatch, useSelector} from "react-redux"
+import { getProject } from "../REDUX/Project/action";
 
 const CreateProjectPopUp = ({ isOpen, onClose, onCreateProject }) => {
+  const {isloading}=useSelector((res)=>res.projectreducer)
+ const dispatch=useDispatch()
   const [projectName, setProjectName] = useState("");
   const [isname, setisname] = useState(false);
 
@@ -14,6 +18,7 @@ const CreateProjectPopUp = ({ isOpen, onClose, onCreateProject }) => {
         setisname(true)
     }else{
         onCreateProject(projectName);
+        dispatch(getProject)
         onClose();
 
     }
@@ -30,6 +35,8 @@ const CreateProjectPopUp = ({ isOpen, onClose, onCreateProject }) => {
                 Project Name
               </label>
               <input
+              spellCheck ="true"
+              lang="en"
                 type="text"
                 id="projectName"
                 name="projectName"
@@ -53,7 +60,7 @@ const CreateProjectPopUp = ({ isOpen, onClose, onCreateProject }) => {
                 onClick={handleCreateProject}
                 className="px-4 py-2 bg-logo-color text-white rounded-md text-base"
               >
-                Create
+               {isloading?"Loading..":" Create"}
               </button>
             </div>
           </form>
